@@ -35,12 +35,14 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	public static Spritesheet spritesheet;
 	public static World world;
 	public static Player player;
+	public static Random rand;
 	
 	public Game() {
 		addKeyListener(this);
 		setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
 		initFrame();
 		// Inicializando objetos
+		rand = new Random();
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		entities = new ArrayList<Entity>();
 		slimes = new ArrayList<Slime>();

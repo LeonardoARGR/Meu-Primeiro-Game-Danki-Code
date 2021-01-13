@@ -31,22 +31,33 @@ public class Slime extends Entity{
 	
 	public void tick() {
 		moved = false;
-		if((int)x < Game.player.getX() && World.isFree((int)(x+speed), this.getY())
-				&& !isColliding((int)(x+speed), this.getY())) {
-			moved = true;
-			x+=speed;
-		}else if((int)x > Game.player.getX() && World.isFree((int)(x-speed), this.getY())
-				&& !isColliding((int)(x-speed), this.getY())) {
-			moved = true;
-			x-=speed;
-		}if((int)y < Game.player.getY() && World.isFree(this.getX(), (int)(y+speed))
-				&& !isColliding(this.getX(), (int)(y+speed))) {
-			moved = true;
-			y+=speed;
-		}else if((int)y > Game.player.getY() && World.isFree(this.getX(), (int)(y-speed))
-				&& !isColliding(this.getX(), (int)(y-speed))) {
-			moved = true;
-			y-=speed;
+		if(isCollidingWithPlayer() == false) {
+			if((int)x < Game.player.getX() && World.isFree((int)(x+speed), this.getY())
+					&& !isColliding((int)(x+speed), this.getY())) {
+				moved = true;
+				x+=speed;
+			}else if((int)x > Game.player.getX() && World.isFree((int)(x-speed), this.getY())
+					&& !isColliding((int)(x-speed), this.getY())) {
+				moved = true;
+				x-=speed;
+			}if((int)y < Game.player.getY() && World.isFree(this.getX(), (int)(y+speed))
+					&& !isColliding(this.getX(), (int)(y+speed))) {
+				moved = true;
+				y+=speed;
+			}else if((int)y > Game.player.getY() && World.isFree(this.getX(), (int)(y-speed))
+					&& !isColliding(this.getX(), (int)(y-speed))) {
+				moved = true;
+				y-=speed;
+			}
+		}else {
+			if(Game.rand.nextInt(100) > 90) {
+				Game.player.life -= Game.rand.nextInt(5);
+				System.out.println(Game.player.life);
+				if(Game.player.life <= 0) {
+					System.out.println("Game Over");
+					System.exit(1);
+				}
+			}
 		}
 		
 		if(moved) {
@@ -70,6 +81,13 @@ public class Slime extends Entity{
 		g.setColor(Color.blue);
 		g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, maskw, maskh);
 		*/
+	}
+	
+	public boolean isCollidingWithPlayer() {
+		Rectangle slimeCurrent = new Rectangle(this.getX() + maskx, this.getY() + masky, maskw, maskh);
+		Rectangle player =  new Rectangle(Game.player.getX(), Game.player.getY(), 16, 16);
+		
+		return slimeCurrent.intersects(player);
 	}
 	
 	public boolean isColliding(int xnext, int ynext) {

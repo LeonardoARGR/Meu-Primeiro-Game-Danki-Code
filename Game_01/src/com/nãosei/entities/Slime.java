@@ -50,7 +50,7 @@ public class Slime extends Entity{
 				y-=speed;
 			}
 		}else {
-			if(Game.rand.nextInt(100) > 90) {
+			if(Game.rand.nextInt(100) < 10) {
 				Game.player.life -= Game.rand.nextInt(5);
 				System.out.println(Game.player.life);
 				if(Game.player.life <= 0) {

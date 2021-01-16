@@ -16,6 +16,7 @@ import com.nãosei.entities.Entity;
 import com.nãosei.entities.Player;
 import com.nãosei.entities.Slime;
 import com.nãosei.graficos.Spritesheet;
+import com.nãosei.graficos.UI;
 import com.nãosei.world.World;
 
 public class Game extends Canvas implements Runnable, KeyListener {
@@ -36,6 +37,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	public static World world;
 	public static Player player;
 	public static Random rand;
+	public UI ui;
 	
 	public Game() {
 		addKeyListener(this);
@@ -50,6 +52,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 		player = new Player(0, 0, 16, 16, spritesheet.getSprite(0, 0, 16, 16));
 		entities.add(player);
 		world = new World("/map.png");
+		ui = new UI();
 	}
 	
 	public void initFrame() {
@@ -105,6 +108,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 			Entity e = entities.get(i);
 			e.render(g);
 		}
+		ui.render(g);
 		/***/
 		g.dispose();
 		g = bs.getDrawGraphics();

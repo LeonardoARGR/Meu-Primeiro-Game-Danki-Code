@@ -132,6 +132,9 @@ public class Player extends Entity{
 				}
 			}else if(atual instanceof Rock) {
 				if(Entity.isColliding(this, atual)) {
+					if(ammo == 3) {
+						continue;
+					}
 					ammo++;
 					Game.entities.remove(i);
 				}

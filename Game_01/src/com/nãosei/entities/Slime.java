@@ -55,7 +55,7 @@ public class Slime extends Entity{
 				System.out.println(Game.player.life);
 				if(Game.player.life <= 0) {
 					System.out.println("Game Over");
-					System.exit(1);
+					//System.exit(1);
 				}
 			}
 		}

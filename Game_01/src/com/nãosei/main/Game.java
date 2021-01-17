@@ -28,7 +28,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
 	//Resolução da tela
 	public static final int WIDTH = 240;
 	public static final int HEIGHT = 160;
-	private final int SCALE = 5;
+	private final int SCALE = 3;
 	
 	private BufferedImage image;
 	public static List<Entity> entities;

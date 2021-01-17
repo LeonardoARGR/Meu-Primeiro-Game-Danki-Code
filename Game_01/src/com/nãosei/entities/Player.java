@@ -22,6 +22,7 @@ public class Player extends Entity{
 	private BufferedImage[] leftPlayer;
 	private BufferedImage[] stopPlayer;
 	public static double life = 100, maxLife = 100;
+	public int ammo = 0;
 
 	public Player(int x, int y, int width, int heigth, BufferedImage sprite) {
 		super(x, y, width, heigth, sprite);
@@ -127,6 +128,11 @@ public class Player extends Entity{
 					if(life > maxLife) {
 						life = maxLife;
 					}
+					Game.entities.remove(i);
+				}
+			}else if(atual instanceof Rock) {
+				if(Entity.isColliding(this, atual)) {
+					ammo++;
 					Game.entities.remove(i);
 				}
 			}

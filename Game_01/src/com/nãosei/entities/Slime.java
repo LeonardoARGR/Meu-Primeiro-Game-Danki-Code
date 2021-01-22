@@ -19,14 +19,15 @@ public class Slime extends Entity{
 	private int maskh = 11;
 	private int frames = 0, maxFrames = 15, index = 0, maxIndex = 2;
 	private boolean moved;
+	private int EnemyLife = 10;
 	
 	private BufferedImage[] sprites;
 
 	public Slime(int x, int y, int width, int heigth, BufferedImage sprite) {
 		super(x, y, width, heigth, null);
 		sprites = new BufferedImage[2];
-		sprites[0] = Game.spritesheet.getSprite(112, 16, 16, 16);
-		sprites[1] = Game.spritesheet.getSprite(128, 16, 16, 16);
+		sprites[0] = Game.spritesheet.getSprite(80, 16, 16, 16);
+		sprites[1] = Game.spritesheet.getSprite(96, 16, 16, 16);
 	}
 	
 	public void tick() {
@@ -52,13 +53,10 @@ public class Slime extends Entity{
 		}else {
 			if(Game.rand.nextInt(100) < 10) {
 				Game.player.life -= Game.rand.nextInt(5);
-				System.out.println(Game.player.life);
-				if(Game.player.life <= 0) {
-					System.out.println("Game Over");
-					//System.exit(1);
-				}
 			}
 		}
+		
+		
 		
 		if(moved) {
 			frames++;
@@ -70,9 +68,32 @@ public class Slime extends Entity{
 				}
 			}
 		}
+		
+		collidingIfRock();
+		
+		if(EnemyLife == 0) {
+			destroySelf();
+		}
+		
 	}
 	
-
+	
+	public void destroySelf() {
+		Game.entities.remove(this);
+	}
+	
+	
+	public void collidingIfRock() {
+		
+		for(int i = 0; i < Game.rocks.size(); i++) {
+			Entity e = Game.rocks.get(i);
+			if(Entity.isColliding(this, e)) {
+				EnemyLife-=10;
+				Game.rocks.remove(i);
+				return;
+			}
+		}
+	}
 	
 	public void render(Graphics g) {
 		super.render(g);

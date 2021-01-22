@@ -11,8 +11,10 @@ import com.nãosei.world.Camera;
 public class Entity {
 	
 	public static BufferedImage HEART_EN = Game.spritesheet.getSprite(16*4, 16, 16, 16);
-	public static BufferedImage SLINGSHOT_EN = Game.spritesheet.getSprite(16*5, 16, 16, 16);
-	public static BufferedImage ROCK_EN = Game.spritesheet.getSprite(16*6, 16, 16, 16);
+	public static BufferedImage SLINGSHOT_EN = Game.spritesheet.getSprite(16*7, 16, 16, 16);
+	public static BufferedImage SLINGSHOT_RIGHT = Game.spritesheet.getSprite(16*8, 16, 16, 16);
+	public static BufferedImage SLINGSHOT_LEFT = Game.spritesheet.getSprite(16*9, 16, 16, 16);
+	public static BufferedImage ROCK_EN = Game.spritesheet.getSprite(16*3, 16, 16, 16);
 	public static BufferedImage SLIME_EN = Game.spritesheet.getSprite(16*7, 16, 16, 16);
 	
 	protected double x;

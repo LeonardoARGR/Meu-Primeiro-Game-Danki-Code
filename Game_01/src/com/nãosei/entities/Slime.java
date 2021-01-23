@@ -19,19 +19,30 @@ public class Slime extends Entity{
 	private int maskh = 11;
 	private int frames = 0, maxFrames = 15, index = 0, maxIndex = 2;
 	private boolean moved;
-	private int EnemyLife = 10;
+	private int enemyLife = 10;
+	private boolean isDamaged;
+	private int damagedFrames = 0;
 	
 	private BufferedImage[] sprites;
 
 	public Slime(int x, int y, int width, int heigth, BufferedImage sprite) {
 		super(x, y, width, heigth, null);
-		sprites = new BufferedImage[2];
-		sprites[0] = Game.spritesheet.getSprite(80, 16, 16, 16);
-		sprites[1] = Game.spritesheet.getSprite(96, 16, 16, 16);
+		sprites = new BufferedImage[4];
+		for(int i = 0; i < 4; i++) {
+			sprites[i] = Game.spritesheet.getSprite(80 + (16*i), 16, 16, 16);
+		}
 	}
 	
 	public void tick() {
 		moved = false;
+		
+		if(isDamaged) {
+			damagedFrames++;
+			if(damagedFrames == 10) {
+				isDamaged = false;
+			}
+		}
+		
 		if(isCollidingWithPlayer() == false) {
 			if((int)x < Game.player.getX() && World.isFree((int)(x+speed), this.getY())
 					&& !isColliding((int)(x+speed), this.getY())) {
@@ -53,6 +64,7 @@ public class Slime extends Entity{
 		}else {
 			if(Game.rand.nextInt(100) < 10) {
 				Game.player.life -= Game.rand.nextInt(5);
+				Game.player.isDamaged = true;
 			}
 		}
 		
@@ -71,7 +83,7 @@ public class Slime extends Entity{
 		
 		collidingIfRock();
 		
-		if(EnemyLife == 0) {
+		if(enemyLife <= 0) {
 			destroySelf();
 		}
 		
@@ -88,7 +100,8 @@ public class Slime extends Entity{
 		for(int i = 0; i < Game.rocks.size(); i++) {
 			Entity e = Game.rocks.get(i);
 			if(Entity.isColliding(this, e)) {
-				EnemyLife-=10;
+				enemyLife -= Game.player.damage;
+				isDamaged = true;
 				Game.rocks.remove(i);
 				return;
 			}
@@ -97,7 +110,11 @@ public class Slime extends Entity{
 	
 	public void render(Graphics g) {
 		super.render(g);
-		g.drawImage(sprites[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+		if(!isDamaged) {
+			g.drawImage(sprites[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+		}else {
+			g.drawImage(sprites[index+2], this.getX() - Camera.x, this.getY() - Camera.y, null);
+		}
 		/*
 		g.setColor(Color.blue);
 		g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, maskw, maskh);

@@ -15,6 +15,7 @@ import com.nãosei.world.World;
 public class Player extends Entity{
 	
 	public boolean right, left, up, down;
+	public boolean isDamaged;
 	public int left_dir = 0, right_dir = 1;
 	public int up_dir = 2, down_dir = 3;
 	public int dir = 0;
@@ -26,11 +27,16 @@ public class Player extends Entity{
 	private BufferedImage[] rightPlayer;
 	private BufferedImage[] leftPlayer;
 	private BufferedImage[] stopPlayer;
+	private BufferedImage[] damagedPlayer;
 	public double life = 100, maxLife = 100;
 	public int ammo = 0;
 	private boolean hasGun = false;
 	public boolean shoot, mouseShoot;
 	public int mx, my;
+	public boolean isCharging = false;
+	public int phase_1 = 20, phase_2 = 40, phase_3 = 80, phase_count = 0, lastPhase = 0;
+	public int damage;
+	private int damagedFrames = 0;
 
 	public Player(int x, int y, int width, int heigth, BufferedImage sprite) {
 		super(x, y, width, heigth, sprite);
@@ -40,6 +46,7 @@ public class Player extends Entity{
 		rightPlayer = new BufferedImage[2];
 		leftPlayer = new BufferedImage[2];
 		stopPlayer = new BufferedImage[4];
+		damagedPlayer = new BufferedImage[3];
 		
 		for(int i = 0; i < 2; i++) {
 			upPlayer[i] = Game.spritesheet.getSprite(64 + (i*16), 0, 16, 16);
@@ -54,6 +61,10 @@ public class Player extends Entity{
 			leftPlayer[i] = Game.spritesheet.getSprite(0 + (i*16), 16, 16, 16);
 		}
 		
+		for(int i = 0; i < 3; i++) {
+			damagedPlayer[i] = Game.spritesheet.getSprite(32 + (16*i), 16, 16, 16);
+		}
+		
 		stopPlayer[0] = Game.spritesheet.getSprite(0, 0, 16, 16);
 		stopPlayer[1] = Game.spritesheet.getSprite(48, 0, 16, 16);
 		stopPlayer[2] = Game.spritesheet.getSprite(96, 0, 16, 16);
@@ -63,64 +74,40 @@ public class Player extends Entity{
 	
 	public void tick() {
 		moved = false;
-		if(shoot) {
-			shoot = false;
-			if(hasGun && ammo > 0) {
-				ammo--;
-				double dx = 0;
-				double dy = 0;
-				int px = 0;
-				int py = 0;
-				
-				
-				if(dir == right_dir) {
-					px = 16;
-					py = 5;
-					dx = 1;
-				}else if(dir == left_dir) {
-					px = -4;
-					py = 5;
-					dx = -1;
-				}if(dir == up_dir) {
-					px = 6;
-					py = 0;
-					dy = -1;
-				}else if(dir == down_dir) {
-					px = 6;
-					py = 8;
-					dy = 1;
-				}
-				
-				
-				RockShoot rock = new RockShoot(this.getX()+px, this.getY()+py, 3, 3, null, dx, dy);
-				Game.rocks.add(rock);
-				
-				
+		
+		if(isDamaged) {
+			damagedFrames++;
+			if(damagedFrames == 15) {
+				isDamaged = false;
+				damagedFrames = 0;
 			}
 		}
 		
-		if(mouseShoot) {
-			mouseShoot = false;
+		if(isCharging) {
+			if(phase_count == phase_2) {
+				lastPhase = phase_2;
+				System.out.println("FASE 2!!!");
+			}else if(phase_count == phase_3) {
+				lastPhase = phase_3;
+				System.out.println("FASE 3!!!");
+			}
 			
-			if(hasGun && ammo > 0) {
-				ammo--;
-				
-				double angle = Math.atan2(my - (this.getY() - Camera.y), mx - (this.getX() - Camera.x));
-				
-				double dx = Math.cos(angle);
-				double dy = Math.sin(angle);
-				int px = 0;
-				int py = 0;
-				
-				
-				RockShoot rock = new RockShoot(this.getX()+px, this.getY()+py, 3, 3, null, dx, dy);
-				Game.rocks.add(rock);
-				
+			else if(phase_count == 0) {
+				if(lastPhase == phase_2) {
+					shoot();
+					isCharging = false;
+					lastPhase = 0;
+					damage = 5;
+				}else if(lastPhase == phase_3) {
+					shoot();
+					isCharging = false;
+					lastPhase = 0;
+					damage = 10;
+				}
+
 				
 			}
 		}
-		
-		
 		
 		if(right && World.isFree((int)(x+speed), this.getY())) {
 			moved = true;
@@ -172,46 +159,56 @@ public class Player extends Entity{
 	}
 	
 	public void render(Graphics g) {
-		if(moved == false) {
+		if(isDamaged == false) {
+			if(moved == false) {
+				if(dir == right_dir) {
+					g.drawImage(stopPlayer[2], this.getX() - Camera.x, this.getY() - Camera.y, null);
+					if(hasGun) {
+						g.drawImage(Entity.SLINGSHOT_RIGHT, this.getX()+7 - Camera.x, this.getY() - Camera.y, null);
+					}
+				}else if(dir == left_dir) {
+					g.drawImage(stopPlayer[3], this.getX() - Camera.x, this.getY() - Camera.y, null);
+					if(hasGun) {
+						g.drawImage(Entity.SLINGSHOT_LEFT, this.getX()-7 - Camera.x, this.getY() - Camera.y, null);
+					}
+				}
+				else if(dir == up_dir) {
+					g.drawImage(stopPlayer[1], this.getX() - Camera.x, this.getY() - Camera.y, null);
+				}else if(moved == false && dir == down_dir) {
+					g.drawImage(stopPlayer[0], this.getX() - Camera.x, this.getY() - Camera.y, null);
+					if(hasGun) {
+						g.drawImage(Entity.SLINGSHOT_EN, this.getX() - Camera.x, this.getY()+5 - Camera.y, null);
+					}
+				}
+			}
+			else {
+				if(dir == right_dir) {
+					g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+					if(hasGun) {
+						g.drawImage(Entity.SLINGSHOT_RIGHT, this.getX()+7 - Camera.x, this.getY() - Camera.y, null);
+					}
+				}else if(dir == left_dir) {
+					g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+					if(hasGun) {
+						g.drawImage(Entity.SLINGSHOT_LEFT, this.getX()-7 - Camera.x, this.getY() - Camera.y, null);
+					}
+				}
+				else if(dir == up_dir) {
+					g.drawImage(upPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+				}else if(dir == down_dir) {
+					g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
+					if(hasGun) {
+						g.drawImage(Entity.SLINGSHOT_EN, this.getX() - Camera.x, this.getY()+5 - Camera.y, null);
+					}
+				}
+			}
+		}else {
 			if(dir == right_dir) {
-				g.drawImage(stopPlayer[2], this.getX() - Camera.x, this.getY() - Camera.y, null);
-				if(hasGun) {
-					g.drawImage(Entity.SLINGSHOT_RIGHT, this.getX()+7 - Camera.x, this.getY() - Camera.y, null);
-				}
+				g.drawImage(damagedPlayer[1], this.getX() - Camera.x, this.getY() - Camera.y, null);
 			}else if(dir == left_dir) {
-				g.drawImage(stopPlayer[3], this.getX() - Camera.x, this.getY() - Camera.y, null);
-				if(hasGun) {
-					g.drawImage(Entity.SLINGSHOT_LEFT, this.getX()-7 - Camera.x, this.getY() - Camera.y, null);
-				}
-			}
-			else if(dir == up_dir) {
-				g.drawImage(stopPlayer[1], this.getX() - Camera.x, this.getY() - Camera.y, null);
-			}else if(moved == false && dir == down_dir) {
-				g.drawImage(stopPlayer[0], this.getX() - Camera.x, this.getY() - Camera.y, null);
-				if(hasGun) {
-					g.drawImage(Entity.SLINGSHOT_EN, this.getX() - Camera.x, this.getY()+5 - Camera.y, null);
-				}
-			}
-		}
-		else {
-			if(dir == right_dir) {
-				g.drawImage(rightPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-				if(hasGun) {
-					g.drawImage(Entity.SLINGSHOT_RIGHT, this.getX()+7 - Camera.x, this.getY() - Camera.y, null);
-				}
-			}else if(dir == left_dir) {
-				g.drawImage(leftPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-				if(hasGun) {
-					g.drawImage(Entity.SLINGSHOT_LEFT, this.getX()-7 - Camera.x, this.getY() - Camera.y, null);
-				}
-			}
-			else if(dir == up_dir) {
-				g.drawImage(upPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-			}else if(dir == down_dir) {
-				g.drawImage(downPlayer[index], this.getX() - Camera.x, this.getY() - Camera.y, null);
-				if(hasGun) {
-					g.drawImage(Entity.SLINGSHOT_EN, this.getX() - Camera.x, this.getY()+5 - Camera.y, null);
-				}
+				g.drawImage(damagedPlayer[2], this.getX() - Camera.x, this.getY() - Camera.y, null);
+			}else {
+				g.drawImage(damagedPlayer[0], this.getX() - Camera.x, this.getY() - Camera.y, null);
 			}
 		}
 	}
@@ -246,5 +243,39 @@ public class Player extends Entity{
 			}
 		}
 	}
-
+	
+	public void shoot() {
+		if(hasGun && ammo > 0) {
+			ammo--;
+			double dx = 0;
+			double dy = 0;
+			int px = 0;
+			int py = 0;
+				
+				
+			if(dir == right_dir) {
+				px = 16;
+				py = 5;
+				dx = 1;
+			}else if(dir == left_dir) {
+				px = -4;
+				py = 5;
+				dx = -1;
+			}if(dir == up_dir) {
+				px = 6;
+				py = 0;
+				dy = -1;
+			}else if(dir == down_dir) {
+				px = 6;
+				py = 8;
+				dy = 1;
+			}
+				
+				
+			RockShoot rock = new RockShoot(this.getX()+px, this.getY()+py, 3, 3, null, dx, dy);
+			Game.rocks.add(rock);
+				
+				
+		}
+	}
 }

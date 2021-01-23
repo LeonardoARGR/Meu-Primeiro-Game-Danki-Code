@@ -19,9 +19,11 @@ public class RockShoot extends Entity{
 		super(x, y, width, heigth, sprite);
 		this.dx = dx;
 		this.dy = dy;
+		
 	}
 	
 	public void tick() {
+		
 		x+=dx*spd;
 		y+=dy*spd;
 		

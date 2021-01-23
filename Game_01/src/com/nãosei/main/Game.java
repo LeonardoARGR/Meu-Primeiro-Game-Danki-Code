@@ -186,8 +186,9 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 		}
 		
-		if(e.getKeyCode() == KeyEvent.VK_E) {
-			player.shoot = true;
+		if(e.getKeyCode() == KeyEvent.VK_E && player.ammo > 0) {
+			player.phase_count++;
+			player.isCharging = true;
 		}
 		
 	}
@@ -216,11 +217,18 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			player.down = false;
 			
 		}
+		
+		if(e.getKeyCode() == KeyEvent.VK_E) {
+			player.phase_count = 0;
+		}
 	}
 
 	public void keyTyped(KeyEvent e) {
 		
 	}
+	
+	
+	
 
 	public void mouseClicked(MouseEvent e) {
 		
@@ -235,12 +243,13 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	}
 
 	public void mousePressed(MouseEvent e) {
-		player.mouseShoot = true;
-		player.mx = (e.getX() / 5);
-		player.my = (e.getY() / 5);
+		player.isCharging = true;
+		player.phase_count++;
+		player.mx = (e.getX() / SCALE);
+		player.my = (e.getY() / SCALE);
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		player.mouseShoot = false;
+		player.phase_count = 0;
 	}
 }

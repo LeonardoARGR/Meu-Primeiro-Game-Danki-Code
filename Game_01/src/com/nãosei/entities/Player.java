@@ -34,7 +34,7 @@ public class Player extends Entity{
 	public boolean shoot, mouseShoot;
 	public int mx, my;
 	public boolean isCharging = false;
-	public int phase_1 = 20, phase_2 = 40, phase_3 = 80, phase_count = 0, lastPhase = 0;
+	public int phase_1 = 30, phase_2 = 60, phase_3 = 110, phase_count = 0, lastPhase = 0;
 	public int damage;
 	private int damagedFrames = 0;
 
@@ -83,32 +83,6 @@ public class Player extends Entity{
 			}
 		}
 		
-		if(isCharging) {
-			if(phase_count == phase_2) {
-				lastPhase = phase_2;
-				System.out.println("FASE 2!!!");
-			}else if(phase_count == phase_3) {
-				lastPhase = phase_3;
-				System.out.println("FASE 3!!!");
-			}
-			
-			else if(phase_count == 0) {
-				if(lastPhase == phase_2) {
-					shoot();
-					isCharging = false;
-					lastPhase = 0;
-					damage = 5;
-				}else if(lastPhase == phase_3) {
-					shoot();
-					isCharging = false;
-					lastPhase = 0;
-					damage = 10;
-				}
-
-				
-			}
-		}
-		
 		if(right && World.isFree((int)(x+speed), this.getY())) {
 			moved = true;
 			dir = right_dir;
@@ -129,6 +103,36 @@ public class Player extends Entity{
 			y+=speed;
 		}
 		
+		if(isCharging) {
+			//O problema tá no contador eu do passado
+			phase_count++;
+			if(phase_count == phase_1) {
+				lastPhase = phase_1;
+			}else if(phase_count == phase_2) {
+				lastPhase = phase_2;
+			}else if(phase_count == phase_3) {
+				lastPhase = phase_3;
+			}
+		}else {
+			phase_count = 0;
+			if(lastPhase == phase_1) {
+				isCharging = false;
+				lastPhase = 0;
+			}
+			else if(lastPhase == phase_2) {
+				shoot();
+				isCharging = false;
+				lastPhase = 0;
+				damage = 5;
+			}else if(lastPhase == phase_3) {
+				shoot();
+				isCharging = false;
+				lastPhase = 0;
+				damage = 10;
+			}else if(lastPhase == 0) {
+				isCharging = false;
+			}
+		}
 		
 		if(moved) {
 			frames++;
@@ -147,14 +151,7 @@ public class Player extends Entity{
 		Camera.y = Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, World.HEIGHT*16 - Game.HEIGHT);
 		
 		if(life<=0) {
-			Game.rand = new Random();
-			Game.entities = new ArrayList<Entity>();
-			Game.slimes = new ArrayList<Slime>();
-			Game.rocks = new ArrayList<RockShoot>();
-			Game.spritesheet = new Spritesheet("/spritesheet.png");
-			Game.player = new Player(0, 0, 16, 16, Game.spritesheet.getSprite(0, 0, 16, 16));
-			Game.entities.add(Game.player);
-			Game.world = new World("/map.png");
+			Game.gameState = "GAME_OVER";
 		}
 	}
 	

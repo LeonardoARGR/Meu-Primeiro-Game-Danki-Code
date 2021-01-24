@@ -92,6 +92,7 @@ public class Slime extends Entity{
 	
 	public void destroySelf() {
 		Game.entities.remove(this);
+		Game.slimes.remove(this);
 	}
 	
 	

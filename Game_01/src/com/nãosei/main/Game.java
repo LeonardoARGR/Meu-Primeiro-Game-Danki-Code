@@ -3,7 +3,9 @@ package com.nãosei.main;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -32,7 +34,9 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	//Resolução da tela
 	public static final int WIDTH = 240;
 	public static final int HEIGHT = 160;
-	private final int SCALE = 5;
+	private final int SCALE = 4;
+	
+	private int CUR_LEVEL = 1, MAX_LEVEL = 2;
 	
 	private BufferedImage image;
 	public static List<Entity> entities;
@@ -43,6 +47,9 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public static Player player;
 	public static Random rand;
 	public UI ui;
+	public static String gameState = "NORMAL";
+	private boolean showMessageGameOver = true, restartGame = false;
+	private int framesGameOver = 0;
 	
 	public Game() {
 		addKeyListener(this);
@@ -58,7 +65,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		spritesheet = new Spritesheet("/spritesheet.png");
 		player = new Player(0, 0, 16, 16, spritesheet.getSprite(0, 0, 16, 16));
 		entities.add(player);
-		world = new World("/map.png");
+		world = new World("/level_1.png");
 		ui = new UI();
 	}
 	
@@ -93,16 +100,45 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	}
 	
 	public void tick() {
-		for(int i = 0; i < entities.size(); i++) {
-			Entity e = entities.get(i);
-			e.tick();
-		}
-		for(int i = 0; i < rocks.size(); i++) {
-			RockShoot r = rocks.get(i);
-			r.tick();
+		if(gameState == "NORMAL") {
+			restartGame = false;
+			for(int i = 0; i < entities.size(); i++) {
+				Entity e = entities.get(i);
+				e.tick();
+			}
+			for(int i = 0; i < rocks.size(); i++) {
+				RockShoot r = rocks.get(i);
+				r.tick();
+			}
+			
+			if(slimes.size() == 0) {
+				CUR_LEVEL++;
+				if(CUR_LEVEL > MAX_LEVEL) {
+					CUR_LEVEL = 1;
+				}
+				String newWorld = "level_" + CUR_LEVEL + ".png";
+				world.restartGame(newWorld);
+			}
+		}else if(gameState == "GAME_OVER") {
+			framesGameOver++;
+			if(framesGameOver == 30) {
+				framesGameOver = 0;
+				if(showMessageGameOver) {
+					showMessageGameOver = false;
+				}else {
+					showMessageGameOver = true;
+				}
+			}
+			
+			if(restartGame) {
+				restartGame = false;
+				gameState = "NORMAL";
+				CUR_LEVEL = 1;
+				String newWorld = "level_" + CUR_LEVEL + ".png";
+				world.restartGame(newWorld);
+			}
 		}
 	}
-	
 	public void render() {
 		BufferStrategy bs = this.getBufferStrategy();
 		if(bs == null) {
@@ -128,6 +164,18 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		g.dispose();
 		g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0, WIDTH*SCALE, HEIGHT*SCALE, null);
+		if(gameState == "GAME_OVER") {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setColor(new Color(0,0,0, 220));
+			g2.fillRect(0, 0, WIDTH * SCALE, HEIGHT * SCALE);
+			g2.setColor(Color.white);
+			g2.setFont(new Font("arial", Font.BOLD, 20*SCALE));
+			g2.drawString("Game Over", 65*SCALE, 70*SCALE);
+			if(showMessageGameOver) {
+				g2.setFont(new Font("arial", Font.BOLD, 10*SCALE));
+				g2.drawString("Pressione ENTER para reiniciar", 45*SCALE, 100*SCALE);
+			}
+		}
 		bs.show();
 	}
 	
@@ -153,7 +201,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 			// Debugando
 			if(System.currentTimeMillis() - timer >= 1000) {
-				System.out.println("FPS: "+ frames);
+				//System.out.println("FPS: "+ frames);
 				frames = 0;
 				timer += 1000;
 			}
@@ -186,9 +234,12 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
 		}
 		
-		if(e.getKeyCode() == KeyEvent.VK_E && player.ammo > 0) {
-			player.phase_count++;
+		if(e.getKeyCode() == KeyEvent.VK_SHIFT && player.ammo > 0) {
 			player.isCharging = true;
+		}
+		
+		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+			restartGame = true;
 		}
 		
 	}
@@ -218,8 +269,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			
 		}
 		
-		if(e.getKeyCode() == KeyEvent.VK_E) {
-			player.phase_count = 0;
+		if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
+			player.isCharging = false;
 		}
 	}
 
@@ -243,8 +294,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	}
 
 	public void mousePressed(MouseEvent e) {
-		player.isCharging = true;
-		player.phase_count++;
+		//player.isCharging = true;
+		//player.phase_count++;
 		player.mx = (e.getX() / SCALE);
 		player.my = (e.getY() / SCALE);
 	}

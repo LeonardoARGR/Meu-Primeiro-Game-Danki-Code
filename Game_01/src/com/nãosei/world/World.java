@@ -3,15 +3,20 @@ package com.nãosei.world;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
 import com.nãosei.entities.Entity;
 import com.nãosei.entities.Heart;
+import com.nãosei.entities.Player;
 import com.nãosei.entities.Rock;
+import com.nãosei.entities.RockShoot;
 import com.nãosei.entities.Slime;
 import com.nãosei.entities.Slingshot;
+import com.nãosei.graficos.Spritesheet;
 import com.nãosei.main.Game;
 
 public class World {
@@ -65,6 +70,18 @@ public class World {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void restartGame(String level) {
+		Game.rand = new Random();
+		Game.entities = new ArrayList<Entity>();
+		Game.slimes = new ArrayList<Slime>();
+		Game.rocks = new ArrayList<RockShoot>();
+		Game.spritesheet = new Spritesheet("/spritesheet.png");
+		Game.player = new Player(0, 0, 16, 16, Game.spritesheet.getSprite(0, 0, 16, 16));
+		Game.entities.add(Game.player);
+		Game.world = new World("/" + level);
+		return;
 	}
 	
 	public static boolean isFree(int x_next, int y_next) {

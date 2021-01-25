@@ -159,9 +159,7 @@ public class Player extends Entity{
 		}
 		
 		checkItens();
-		
-		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, World.WIDTH*16 - Game.WIDTH);
-		Camera.y = Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, World.HEIGHT*16 - Game.HEIGHT);
+		initCamera();
 		
 		if(life<=0) {
 			Game.gameState = "GAME_OVER";
@@ -254,49 +252,10 @@ public class Player extends Entity{
 		}
 	}
 	
-	public void shoot() {
-		if(hasGun && ammo > 0) {
-			ammo--;
-			double dx = 0;
-			double dy = 0;
-			int px = 0;
-			int py = 0;
-				
-				
-			if(dir == right_dir) {
-				px = 16;
-				py = 5;
-				dx = 1;
-			}else if(dir == left_dir) {
-				px = -4;
-				py = 5;
-				dx = -1;
-			}if(dir == up_dir) {
-				px = 6;
-				py = 0;
-				dy = -1;
-			}else if(dir == down_dir) {
-				px = 6;
-				py = 8;
-				dy = 1;
-			}
-				
-				
-			RockShoot rock = new RockShoot(this.getX()+px, this.getY()+py, 3, 3, null, dx, dy);
-			Game.rocks.add(rock);
-				
-				
-		}
-	}
-	
 	public void mouseShoot() {
 		if(hasGun && ammo > 0) {
 			//ammo--;
-
-			double angle = Math.atan2(my - (this.getY() - Camera.y), mx - (this.getX() - Camera.x));
-
-			double dx = Math.cos(angle);
-			double dy = Math.sin(angle);
+			
 			int px = 0;
 			int py = 0;
 			
@@ -313,12 +272,21 @@ public class Player extends Entity{
 				px = 6;
 				py = 5;
 			}
+			
+			double angle = Math.atan2(my - (this.getY()+py - Camera.y), mx - (this.getX()+px - Camera.x));
 
-
-			RockShoot rock = new RockShoot(this.getX()+px, this.getY()+py, 3, 3, null, dx, dy);
+			double dx = Math.cos(angle);
+			double dy = Math.sin(angle);
+			
+			RockShoot rock = new RockShoot(this.getX() + px, this.getY() + py, 3, 3, null, dx, dy);
 			Game.rocks.add(rock);
 
 
 		}
+	}
+	
+	public void initCamera() {
+		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, World.WIDTH*16 - Game.WIDTH);
+		Camera.y = Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, World.HEIGHT*16 - Game.HEIGHT);
 	}
 }

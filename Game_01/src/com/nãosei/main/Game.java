@@ -1,15 +1,22 @@
 package com.nãosei.main;
 
+import java.awt.AWTException;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -25,7 +32,7 @@ import com.nãosei.graficos.UI;
 import com.nãosei.world.Camera;
 import com.nãosei.world.World;
 
-public class Game extends Canvas implements Runnable, KeyListener, MouseListener {
+public class Game extends Canvas implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 
 	private static final long serialVersionUID = 1L;
 	public static JFrame frame;
@@ -34,7 +41,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	//Resolução da tela
 	public static final int WIDTH = 240;
 	public static final int HEIGHT = 160;
-	private final int SCALE = 4;
+	private final int SCALE = 5;
 	
 	private int CUR_LEVEL = 1, MAX_LEVEL = 2;
 	
@@ -50,12 +57,20 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	public static String gameState = "NORMAL";
 	private boolean showMessageGameOver = true, restartGame = false;
 	private int framesGameOver = 0;
+	private Image cursorImage;
+	private Cursor blankCursor;
 	
 	public Game() {
 		addKeyListener(this);
 		addMouseListener(this);
+		addMouseMotionListener(this);
 		setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
 		initFrame();
+		
+		//Deixando o cursor do mouse transparente
+		cursorImage = Toolkit.getDefaultToolkit().getImage("xparent.gif");
+		blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, new Point(0, 0), "");
+		setCursor(blankCursor);
 		// Inicializando objetos
 		rand = new Random();
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -233,10 +248,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			player.down = true;
 
 		}
-		
+		/*
 		if(e.getKeyCode() == KeyEvent.VK_SHIFT && player.ammo > 0) {
 			player.isCharging = true;
 		}
+		*/
 		
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 			restartGame = true;
@@ -268,10 +284,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			player.down = false;
 			
 		}
-		
+		/*
 		if(e.getKeyCode() == KeyEvent.VK_SHIFT) {
 			player.isCharging = false;
 		}
+		*/
 	}
 
 	public void keyTyped(KeyEvent e) {
@@ -282,25 +299,36 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	
 
 	public void mouseClicked(MouseEvent e) {
-		
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		
 	}
 
 	public void mouseExited(MouseEvent e) {
-		
 	}
 
 	public void mousePressed(MouseEvent e) {
-		//player.isCharging = true;
-		//player.phase_count++;
-		player.mx = (e.getX() / SCALE);
-		player.my = (e.getY() / SCALE);
+		if(player.ammo > 0) {
+			player.isCharging = true;
+		}
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		player.phase_count = 0;
+		player.isCharging = false;
+		player.mx = (e.getX() / SCALE);
+		player.my = (e.getY() / SCALE);
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		player.aimx = e.getX() / SCALE;
+		player.aimy = e.getY() / SCALE;
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		player.aimx = e.getX() / SCALE;
+		player.aimy = e.getY() / SCALE;
 	}
 }

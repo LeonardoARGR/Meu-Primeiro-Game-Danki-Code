@@ -37,6 +37,8 @@ public class Player extends Entity{
 	public int phase_1 = 30, phase_2 = 60, phase_3 = 110, phase_count = 0, lastPhase = 0;
 	public int damage;
 	private int damagedFrames = 0;
+	public int aimx, aimy;
+	public double mouseAngle;
 
 	public Player(int x, int y, int width, int heigth, BufferedImage sprite) {
 		super(x, y, width, heigth, sprite);
@@ -74,6 +76,7 @@ public class Player extends Entity{
 	
 	public void tick() {
 		moved = false;
+		mouseAngle = Math.atan2(aimy - (getY() - Camera.y), aimx - (getX() - Camera.x));
 		
 		if(isDamaged) {
 			damagedFrames++;
@@ -113,6 +116,16 @@ public class Player extends Entity{
 			}else if(phase_count == phase_3) {
 				lastPhase = phase_3;
 			}
+			
+			if(-0.5 < mouseAngle && mouseAngle < 0.5) {
+				dir = right_dir;
+			}else if(-2.5 < mouseAngle && mouseAngle < -0.5){
+				dir = up_dir;
+			}else if(0.5 < mouseAngle && mouseAngle < 2.5) {
+				dir = down_dir;
+			}else {
+				dir = left_dir;
+			}
 		}else {
 			phase_count = 0;
 			if(lastPhase == phase_1) {
@@ -120,12 +133,12 @@ public class Player extends Entity{
 				lastPhase = 0;
 			}
 			else if(lastPhase == phase_2) {
-				shoot();
+				mouseShoot();
 				isCharging = false;
 				lastPhase = 0;
 				damage = 5;
 			}else if(lastPhase == phase_3) {
-				shoot();
+				mouseShoot();
 				isCharging = false;
 				lastPhase = 0;
 				damage = 10;
@@ -273,6 +286,39 @@ public class Player extends Entity{
 			Game.rocks.add(rock);
 				
 				
+		}
+	}
+	
+	public void mouseShoot() {
+		if(hasGun && ammo > 0) {
+			//ammo--;
+
+			double angle = Math.atan2(my - (this.getY() - Camera.y), mx - (this.getX() - Camera.x));
+
+			double dx = Math.cos(angle);
+			double dy = Math.sin(angle);
+			int px = 0;
+			int py = 0;
+			
+			if(dir == right_dir) {
+				px = 16;
+				py = 4;
+			}else if(dir == left_dir) {
+				px = -2;
+				py = 4;
+			}else if(dir == up_dir) {
+				px = 6;
+				py = 0;
+			}else if(dir == down_dir){
+				px = 6;
+				py = 5;
+			}
+
+
+			RockShoot rock = new RockShoot(this.getX()+px, this.getY()+py, 3, 3, null, dx, dy);
+			Game.rocks.add(rock);
+
+
 		}
 	}
 }

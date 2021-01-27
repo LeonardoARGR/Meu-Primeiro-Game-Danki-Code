@@ -163,6 +163,7 @@ public class Player extends Entity{
 		
 		if(life<=0) {
 			Game.gameState = "GAME_OVER";
+			life = 0;
 		}
 	}
 	
@@ -254,7 +255,7 @@ public class Player extends Entity{
 	
 	public void mouseShoot() {
 		if(hasGun && ammo > 0) {
-			//ammo--;
+			ammo--;
 			
 			int px = 0;
 			int py = 0;

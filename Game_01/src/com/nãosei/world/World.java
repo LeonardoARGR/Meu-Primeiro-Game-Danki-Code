@@ -72,7 +72,7 @@ public class World {
 		}
 	}
 	
-	public void restartGame(String level) {
+	public static void restartGame(String level) {
 		Game.rand = new Random();
 		Game.entities = new ArrayList<Entity>();
 		Game.slimes = new ArrayList<Slime>();

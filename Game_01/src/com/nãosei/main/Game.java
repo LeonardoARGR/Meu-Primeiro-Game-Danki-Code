@@ -1,6 +1,5 @@
 package com.nãosei.main;
 
-import java.awt.AWTException;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -8,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -29,7 +27,6 @@ import com.nãosei.entities.RockShoot;
 import com.nãosei.entities.Slime;
 import com.nãosei.graficos.Spritesheet;
 import com.nãosei.graficos.UI;
-import com.nãosei.world.Camera;
 import com.nãosei.world.World;
 
 public class Game extends Canvas implements Runnable, KeyListener, MouseListener, MouseMotionListener {
@@ -61,7 +58,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	private Cursor blankCursor;
 	private Menu menu;
 	
+	public boolean saveGame = false;
+	
 	public Game() {
+		Sound.musicBackground.play();
+		
 		addKeyListener(this);
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -118,6 +119,14 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	
 	public void tick() {
 		if(gameState == "NORMAL") {
+			if(saveGame) {
+				saveGame = false;
+				String[] opt1 = {"level"};
+				int[] opt2 = {this.CUR_LEVEL};
+				Menu.saveGame(opt1, opt2, 10);
+				System.out.println("Jogo salvo!");
+			}
+			
 			restartGame = false;
 			for(int i = 0; i < entities.size(); i++) {
 				Entity e = entities.get(i);
@@ -271,8 +280,14 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		}
 		
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			menu.esc = true;
+			Menu.esc = true;
 			gameState = "MENU";
+		}
+		
+		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+			if(gameState == "NORMAL") {	
+				this.saveGame = true;
+			}
 		}
 		
 	}

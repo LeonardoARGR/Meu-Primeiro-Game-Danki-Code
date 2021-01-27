@@ -17,6 +17,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -27,6 +28,7 @@ import com.nãosei.entities.RockShoot;
 import com.nãosei.entities.Slime;
 import com.nãosei.graficos.Spritesheet;
 import com.nãosei.graficos.UI;
+import com.nãosei.world.LightMap;
 import com.nãosei.world.World;
 
 public class Game extends Canvas implements Runnable, KeyListener, MouseListener, MouseMotionListener {
@@ -60,6 +62,10 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	
 	public boolean saveGame = false;
 	
+	public static int[] pixels;
+	
+	private LightMap lightmap;
+	
 	public Game() {
 		Sound.musicBackground.play();
 		
@@ -76,6 +82,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 		// Inicializando objetos
 		rand = new Random();
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		lightmap = new LightMap("/lightmap.png");
+		pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 		entities = new ArrayList<Entity>();
 		slimes = new ArrayList<Slime>();
 		rocks = new ArrayList<RockShoot>();
@@ -143,7 +151,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 					CUR_LEVEL = 1;
 				}
 				String newWorld = "level_" + CUR_LEVEL + ".png";
-				world.restartGame(newWorld);
+				World.restartGame(newWorld);
 			}
 		}else if(gameState == "GAME_OVER") {
 			framesGameOver++;
@@ -161,7 +169,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				gameState = "NORMAL";
 				CUR_LEVEL = 1;
 				String newWorld = "level_" + CUR_LEVEL + ".png";
-				world.restartGame(newWorld);
+				World.restartGame(newWorld);
 			}
 		}else if(gameState == "MENU") {
 			menu.tick();
@@ -187,6 +195,9 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			RockShoot r = rocks.get(i);
 			r.render(g);
 		}
+		
+		lightmap.applyLight();
+		
 		if(gameState == "NORMAL") {
 			ui.render(g);
 		}

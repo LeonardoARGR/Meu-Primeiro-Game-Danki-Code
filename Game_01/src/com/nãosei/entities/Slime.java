@@ -42,29 +42,30 @@ public class Slime extends Entity{
 				isDamaged = false;
 			}
 		}
-		
-		if(isCollidingWithPlayer() == false) {
-			if((int)x < Game.player.getX() && World.isFree((int)(x+speed), this.getY())
-					&& !isColliding((int)(x+speed), this.getY())) {
-				moved = true;
-				x+=speed;
-			}else if((int)x > Game.player.getX() && World.isFree((int)(x-speed), this.getY())
-					&& !isColliding((int)(x-speed), this.getY())) {
-				moved = true;
-				x-=speed;
-			}if((int)y < Game.player.getY() && World.isFree(this.getX(), (int)(y+speed))
-					&& !isColliding(this.getX(), (int)(y+speed))) {
-				moved = true;
-				y+=speed;
-			}else if((int)y > Game.player.getY() && World.isFree(this.getX(), (int)(y-speed))
-					&& !isColliding(this.getX(), (int)(y-speed))) {
-				moved = true;
-				y-=speed;
-			}
-		}else {
-			if(Game.rand.nextInt(100) < 10) {
-				Game.player.life -= Game.rand.nextInt(5);
-				Game.player.isDamaged = true;
+		if(calculateDistance(this.getX(), this.getY(), Game.player.getX(), Game.player.getY()) <= 100) {
+			if(isCollidingWithPlayer() == false) {
+				if((int)x < Game.player.getX() && World.isFree((int)(x+speed), this.getY())
+						&& !isColliding((int)(x+speed), this.getY())) {
+					moved = true;
+					x+=speed;
+				}else if((int)x > Game.player.getX() && World.isFree((int)(x-speed), this.getY())
+						&& !isColliding((int)(x-speed), this.getY())) {
+					moved = true;
+					x-=speed;
+				}if((int)y < Game.player.getY() && World.isFree(this.getX(), (int)(y+speed))
+						&& !isColliding(this.getX(), (int)(y+speed))) {
+					moved = true;
+					y+=speed;
+				}else if((int)y > Game.player.getY() && World.isFree(this.getX(), (int)(y-speed))
+						&& !isColliding(this.getX(), (int)(y-speed))) {
+					moved = true;
+					y-=speed;
+				}
+			}else {
+				if(Game.rand.nextInt(100) < 10) {
+					Game.player.life -= Game.rand.nextInt(5);
+					Game.player.isDamaged = true;
+				}
 			}
 		}
 		

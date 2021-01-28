@@ -196,7 +196,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			r.render(g);
 		}
 		
-		lightmap.applyLight();
+		//lightmap.applyLight();
 		
 		if(gameState == "NORMAL") {
 			ui.render(g);
@@ -218,6 +218,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 		}else if(gameState == "MENU") {
 			menu.render(g);
+			player.initCamera();
 		}
 		bs.show();
 	}

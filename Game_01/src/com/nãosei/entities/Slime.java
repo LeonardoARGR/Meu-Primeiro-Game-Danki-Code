@@ -5,7 +5,9 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import com.nãosei.main.Game;
+import com.nãosei.world.AStar;
 import com.nãosei.world.Camera;
+import com.nãosei.world.Vector2i;
 import com.nãosei.world.World;
 
 public class Slime extends Entity{
@@ -14,8 +16,8 @@ public class Slime extends Entity{
 	
 	private int maskx = 2;
 	private int masky = 3;
-	private int maskw = 12;
-	private int maskh = 11;
+	private int mwidth = 12;
+	private int mheight = 11;
 	private int frames = 0, maxFrames = 15, index = 0, maxIndex = 2;
 	private boolean moved;
 	private int enemyLife = 10;
@@ -41,6 +43,8 @@ public class Slime extends Entity{
 				isDamaged = false;
 			}
 		}
+		
+		/*
 		if(calculateDistance(this.getX(), this.getY(), Game.player.getX(), Game.player.getY()) <= 100) {
 			if(isCollidingWithPlayer() == false) {
 				if((int)x < Game.player.getX() && World.isFree((int)(x+speed), this.getY())
@@ -67,8 +71,15 @@ public class Slime extends Entity{
 				}
 			}
 		}
+		*/
 		
+		if(path == null || path.size() == 0) {
+			Vector2i start = new Vector2i((int)(x/16), (int)(y/16));
+			Vector2i end = new Vector2i((int)(Game.player.x/16), (int)(Game.player.y/16));
+			path = AStar.findPath(Game.world, start, end);
+		}
 		
+		followPath(path);
 		
 		if(moved) {
 			frames++;
@@ -123,26 +134,11 @@ public class Slime extends Entity{
 	}
 	
 	public boolean isCollidingWithPlayer() {
-		Rectangle slimeCurrent = new Rectangle(this.getX() + maskx, this.getY() + masky, maskw, maskh);
+		Rectangle slimeCurrent = new Rectangle(this.getX() + maskx, this.getY() + masky, mwidth, mheight);
 		Rectangle player =  new Rectangle(Game.player.getX(), Game.player.getY(), 16, 16);
 		
 		return slimeCurrent.intersects(player);
 	}
 	
-	public boolean isColliding(int xnext, int ynext) {
-		Rectangle slimeCurrent = new Rectangle(xnext + maskx, ynext + masky, maskw, maskh);
-		for(int i = 0; i < Game.slimes.size(); i++) {
-			Slime s = Game.slimes.get(i);
-			if(s == this) {
-				continue;
-			}
-			Rectangle targetSlime = new Rectangle(s.getX() + maskx, s.getY() + masky, maskw, maskh);
-			if(slimeCurrent.intersects(targetSlime)) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
+	
 }

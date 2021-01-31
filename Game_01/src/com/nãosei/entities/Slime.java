@@ -1,5 +1,6 @@
 package com.nãosei.entities;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -72,11 +73,17 @@ public class Slime extends Entity{
 			}
 		}
 		*/
-		
-		if(path == null || path.size() == 0) {
-			Vector2i start = new Vector2i((int)(x/16), (int)(y/16));
-			Vector2i end = new Vector2i((int)(Game.player.x/16), (int)(Game.player.y/16));
-			path = AStar.findPath(Game.world, start, end);
+		if(!isCollidingWithPlayer()) {
+			if(path == null || path.size() == 0) {
+				Vector2i start = new Vector2i((int)(x/16), (int)(y/16));
+				Vector2i end = new Vector2i((int)((Game.player.x+8)/16), (int)((Game.player.y+8)/16));
+				path = AStar.findPath(Game.world, start, end);
+			}
+		}else {
+			if(Game.rand.nextInt(100) < 10) {
+				Game.player.life -= Game.rand.nextInt(5);
+				Game.player.isDamaged = true;
+			}
 		}
 		
 		followPath(path);
@@ -129,7 +136,7 @@ public class Slime extends Entity{
 		}
 		/*
 		g.setColor(Color.blue);
-		g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, maskw, maskh);
+		g.fillRect(this.getX() + maskx - Camera.x, this.getY() + masky - Camera.y, mwidth, mheight);
 		*/
 	}
 	
@@ -139,6 +146,4 @@ public class Slime extends Entity{
 		
 		return slimeCurrent.intersects(player);
 	}
-	
-	
 }

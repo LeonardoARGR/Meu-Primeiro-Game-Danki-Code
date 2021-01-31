@@ -1,5 +1,6 @@
 package com.nãosei.entities;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -43,6 +44,10 @@ public class Player extends Entity{
 	public Player(int x, int y, int width, int heigth, BufferedImage sprite) {
 		super(x, y, width, heigth, sprite);
 		
+		maskx = 1;
+		mwidth = 14;
+		mheight = 15;
+		
 		upPlayer = new BufferedImage[2];
 		downPlayer = new BufferedImage[2];
 		rightPlayer = new BufferedImage[2];
@@ -75,6 +80,7 @@ public class Player extends Entity{
 	}
 	
 	public void tick() {
+		
 		moved = false;
 		mouseAngle = Math.atan2(aimy - (getY() - Camera.y), aimx - (getX() - Camera.x));
 		
@@ -220,6 +226,10 @@ public class Player extends Entity{
 				g.drawImage(damagedPlayer[0], this.getX() - Camera.x, this.getY() - Camera.y, null);
 			}
 		}
+		/*
+		g.setColor(Color.red);
+		g.fillRect(this.getX() + maskx - Camera.x,  this.getY() + masky - Camera.y, mwidth, mheight);
+		*/
 	}
 	
 	public void checkItens() {

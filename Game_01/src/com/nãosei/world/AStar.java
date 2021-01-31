@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+
 public class AStar {
 	
 	public static double lastTime = System.currentTimeMillis();
@@ -67,30 +68,32 @@ public class AStar {
 				if(i == 0) {
 					Tile test = World.tiles[x+xi+1+((y+yi)*World.WIDTH)];
 					Tile test2 = World.tiles[x+xi+((y+yi+1)*World.WIDTH)];
-					if(test instanceof WallTile || test2 instanceof WallTile) {
-						continue;
-					}
+						if(test instanceof WallTile || test2 instanceof WallTile) {
+							continue;
+						}
 				}else if(i == 2) {
 					Tile test = World.tiles[x+xi-1+((y+yi)*World.WIDTH)];
 					Tile test2 = World.tiles[x+xi+((y+yi+1)*World.WIDTH)];
-					if(test instanceof WallTile || test2 instanceof WallTile) {
-						continue;
-					}
+						if(test instanceof WallTile || test2 instanceof WallTile) {
+							continue;
+						}
 				}else if(i == 6) {
 					Tile test = World.tiles[x+xi+((y+yi-1)*World.WIDTH)];
 					Tile test2 = World.tiles[x+xi+1+((y+yi)*World.WIDTH)];
-					if(test instanceof WallTile || test2 instanceof WallTile) {
-						continue;
-					}
+						if(test instanceof WallTile || test2 instanceof WallTile) {
+							continue;
+						}
 				}else if(i == 8) {
 					Tile test = World.tiles[x+xi+((y+yi-1)*World.WIDTH)];
 					Tile test2 = World.tiles[x+xi-1+((y+yi)*World.WIDTH)];
-					if(test instanceof WallTile || test2 instanceof WallTile) {
-						continue;
-					}
+						if(test instanceof WallTile || test2 instanceof WallTile) {
+							continue;
+						}
 				}
 				
+				
 				Vector2i a = new Vector2i(x+xi, y+yi);
+				
 				double gCost = current.gCost + getDistance(current.tile, a);
 				double hCost = getDistance(a, end);
 				
@@ -104,6 +107,7 @@ public class AStar {
 					openList.remove(current);
 					openList.add(node);
 				}
+				
 			}
 		}
 		
@@ -112,7 +116,7 @@ public class AStar {
 		
 	}
 	
-	public static boolean vecInList(List<Node> list, Vector2i vector) {
+	private static boolean vecInList(List<Node> list, Vector2i vector) {
 		for(int i = 0; i < list.size(); i++) {
 			if(list.get(i).tile.equals(vector)) {
 				return true;
@@ -126,7 +130,7 @@ public class AStar {
 		double dx = tile.x - goal.x;
 		double dy = tile.y - goal.y;
 		
-		return Math.sqrt(dx * dy + dx * dy);
+		return Math.sqrt(dx * dx + dy * dy);
 	}
 
 }

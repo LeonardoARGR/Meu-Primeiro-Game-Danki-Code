@@ -3,6 +3,7 @@ package com.nãosei.entities;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.Comparator;
 import java.util.List;
 
 import com.nãosei.main.Game;
@@ -32,6 +33,8 @@ public class Entity {
 	protected int mheight;
 	
 	protected List<Node> path;
+	
+	public int depth = 0;
 	
 	public Entity(int x, int y, int width, int heigth, BufferedImage sprite) {
 		this.x = x;
@@ -135,6 +138,23 @@ public class Entity {
 		
 		return false;
 	}
+	
+	public static Comparator<Entity> entitySorter = new Comparator<Entity>(){
+		
+		@Override
+		
+		public int compare(Entity e0, Entity e1) {
+			if(e1.depth < e0.depth) {
+				return +1;
+			}
+			if(e1.depth > e0.depth) {
+				return -1;
+			}
+			
+			return 0;
+		}
+		
+	};
 	
 	
 }

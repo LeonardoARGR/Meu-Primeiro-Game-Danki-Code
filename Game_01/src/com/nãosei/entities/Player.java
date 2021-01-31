@@ -77,6 +77,8 @@ public class Player extends Entity{
 		stopPlayer[2] = Game.spritesheet.getSprite(96, 0, 16, 16);
 		stopPlayer[3] = Game.spritesheet.getSprite(144, 0, 16, 16);
 		
+		depth = 1;
+		
 	}
 	
 	public void tick() {

@@ -33,6 +33,8 @@ public class Slime extends Entity{
 		for(int i = 0; i < 4; i++) {
 			sprites[i] = Game.spritesheet.getSprite(80 + (16*i), 16, 16, 16);
 		}
+		
+		depth = 2;
 	}
 	
 	public void tick() {

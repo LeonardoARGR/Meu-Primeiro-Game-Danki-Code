@@ -27,48 +27,52 @@ public class World {
 	public static final int TILE_SIZE = 16;
 	
 	public World(String path) {
-		try {
-			BufferedImage map = ImageIO.read(getClass().getResource(path));
-			int[] pixels = new int[map.getWidth() * map.getHeight()];
-			WIDTH = map.getWidth();
-			HEIGHT = map.getHeight();
-			tiles = new Tile[map.getWidth() * map.getHeight()];
-			map.getRGB(0, 0, map.getWidth(), map.getHeight(), pixels, 0, map.getWidth());
-			for(int xx = 0; xx < map.getWidth(); xx++){
-				for(int yy = 0; yy < map.getHeight(); yy++){
-					int pixelAtual = pixels[xx + (yy * map.getWidth())];
-					
-					tiles[xx + (yy * WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR);
-					if(pixelAtual == 0xFF000000){
-						//Chão
-						tiles[xx + (yy * WIDTH)] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR);
-					}else if(pixelAtual == 0xFFFFFFFF){
-						//Parede
-						tiles[xx + (yy* WIDTH)] = new WallTile(xx*16, yy*16, Tile.TILE_WALL);
-					}else if(pixelAtual == 0xFF0026FF){
-						//Player
-						Game.player.setX(xx*16);
-						Game.player.setY(yy*16);
-					}else if(pixelAtual == 0xFFFF0000){
-						//Inimigo
-						Slime slime = new Slime(xx*16, yy*16, 16, 16, Entity.SLIME_EN);
-						Game.entities.add(slime);
-						Game.slimes.add(slime);
-					}else if(pixelAtual == 0xFF7F3300){
-						//Estilingue
-						Game.entities.add(new Slingshot(xx*16, yy*16, 16, 16, Entity.SLINGSHOT_EN));
-					}else if(pixelAtual == 0xFFFF3F3F){
-						//Vida
-						Game.entities.add(new Heart(xx*16, yy*16, 16, 16, Entity.HEART_EN));
-					}else if(pixelAtual == 0xFFA0A0A0){
-						//Pedrinhas
-						Game.entities.add(new Rock(xx*16, yy*16, 16, 16, Entity.ROCK_EN));
-					}
+		Game.player.setX(0);
+		Game.player.setY(0);
+		WIDTH = 100;
+		HEIGHT = 100;
+		tiles = new Tile[WIDTH*HEIGHT];
+		
+		for(int xx = 0; xx < WIDTH; xx++) {
+			for(int yy = 0; yy < HEIGHT; yy++) {
+				tiles[xx+yy*WIDTH] = new WallTile(xx*16, yy*16, Tile.TILE_WALL);
+			}
+		}
+		
+		int dir = 0;
+		int xx = 0, yy = 0;
+		
+		for(int i = 0; i < 200; i++) {
+			tiles[xx+yy*WIDTH] = new FloorTile(xx*16, yy*16, Tile.TILE_FLOOR);
+			
+			if(dir == 0) {
+				//direita
+				if(xx < WIDTH) {
+					xx++;
+				}
+			}else if(dir == 1) {
+				//esquerda
+				if(xx > 0) {
+					xx--;
+				}
+			}else if(dir == 2) {
+				//baixo
+				if(yy < HEIGHT) {
+					yy++;
+				}
+			}else if(dir == 3) {
+				//cima
+				if(yy > 0) {
+					yy--;
 				}
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			
+			if(Game.rand.nextInt() < 50) {
+				dir = Game.rand.nextInt(4);
+			}
+			
 		}
+		
 	}
 	
 	public static void restartGame(String level) {

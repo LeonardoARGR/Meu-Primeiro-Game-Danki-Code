@@ -47,6 +47,7 @@ public class Menu {
 		
 		if(enter) {
 			enter = false;
+			Sound.music.loop();
 			if(options[currentOption] == "Novo jogo" || options[currentOption] == "Continuar") {
 				Game.gameState = "NORMAL";
 				file = new File("save.txt");

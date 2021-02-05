@@ -41,7 +41,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	//Resolução da tela
 	public static final int WIDTH = 240;
 	public static final int HEIGHT = 160;
-	public static final int SCALE = 5;
+	public static final int SCALE = 4;
 	
 	private int CUR_LEVEL = 1, MAX_LEVEL = 2;
 	
@@ -225,6 +225,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 	}
 	
 	public void run() {
+		requestFocus();
 		long lastTime = System.nanoTime();
 		double amountOfTicks = 60.0;
 		double ns = 1000000000 / amountOfTicks;
@@ -246,7 +247,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 			}
 			// Debugando
 			if(System.currentTimeMillis() - timer >= 1000) {
-				//System.out.println("FPS: "+ frames);
+				System.out.println("FPS: "+ frames);
 				frames = 0;
 				timer += 1000;
 			}

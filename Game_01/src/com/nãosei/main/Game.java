@@ -144,7 +144,6 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				r.tick();
 			}
 			
-			/*
 			if(slimes.size() == 0) {
 				CUR_LEVEL++;
 				if(CUR_LEVEL > MAX_LEVEL) {
@@ -152,7 +151,7 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 				}
 				String newWorld = "level_" + CUR_LEVEL + ".png";
 				World.restartGame(newWorld);
-			}*/
+			}
 		}else if(gameState == "GAME_OVER") {
 			framesGameOver++;
 			if(framesGameOver == 30) {

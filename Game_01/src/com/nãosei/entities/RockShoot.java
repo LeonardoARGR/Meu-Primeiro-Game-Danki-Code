@@ -30,6 +30,7 @@ public class RockShoot extends Entity{
 			y+=dy*spd;
 		}else {
 			Game.rocks.remove(this);
+			World.generateParticles(30, (int)(x), (int)(y), Color.gray);
 			return;
 		}
 		curLife++;

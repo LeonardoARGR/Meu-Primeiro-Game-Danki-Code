@@ -1,5 +1,6 @@
 package com.nãosei.world;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import javax.imageio.ImageIO;
 
 import com.nãosei.entities.Entity;
 import com.nãosei.entities.Heart;
+import com.nãosei.entities.Particle;
 import com.nãosei.entities.Player;
 import com.nãosei.entities.Rock;
 import com.nãosei.entities.RockShoot;
@@ -130,6 +132,15 @@ public class World {
 		Game.entities.add(Game.player);
 		Game.world = new World("/" + level);
 		return;
+	}
+	
+	public static void generateParticles(int amount, int x, int y, Color color) {
+		for(int i = 0; i < amount; i++) {
+			Particle particle = new Particle(x, y, 3, 3, null);
+			particle.color = color;
+			Game.entities.add(particle);
+		}
+		
 	}
 	
 	public static boolean isFree(int x_next, int y_next) {
